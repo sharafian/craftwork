@@ -27,13 +27,6 @@ export class DiscordServerKeys {
     return new ServerKey(base64url(randomBytes(32)))
   }
 
-  async makeKey (server: DiscordServer): Promise<void> {
-    const key = this.generateKey()
-
-    await this.db.set(serverKeyKey(key), server.toString())
-    await this.db.set(serverKey(server), key.toString())
-  }
-
   async getServer (key: ServerKey): Promise<DiscordServer | void> {
     const server = await this.db.get(serverKeyKey(key))
     return server
@@ -43,9 +36,15 @@ export class DiscordServerKeys {
 
   async getKey (server: DiscordServer): Promise<ServerKey | void> {
     const key = await this.db.get(serverKey(server))
-    return key
-      ? new ServerKey(key)
-      : undefined
+
+    if (!key) {
+      const newKey = this.generateKey()
+      await this.db.set(serverKeyKey(newKey), server.toString())
+      await this.db.set(serverKey(server), newKey.toString())
+      return newKey
+    } else {
+      return new ServerKey(key)
+    }
   }
 
   validateKey () {

@@ -4,7 +4,7 @@ export * from './ServerKey'
 export * from './DiscordServer'
 export * from './MinecraftPlayer'
 export * from './PlayerKey'
-export * from './DiscordUser'
+export * from './DiscordMember'
 
 export function base64url (buf: Buffer): string {
   return buf.toString('base64')
