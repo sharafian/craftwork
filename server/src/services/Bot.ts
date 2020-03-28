@@ -1,7 +1,11 @@
 import {
   Client as DiscordClient,
   Message,
-  Permissions
+  Permissions,
+  GuildMember,
+  Guild,
+  VoiceChannel,
+  Channel
 } from 'discord.js'
 
 import { Injector } from 'reduct'
@@ -11,6 +15,7 @@ import { DiscordServerKeys } from './DiscordServerKeys'
 import {
   DiscordServer,
   DiscordMember,
+  DiscordVoiceChannel,
   PlayerKey
 } from '../lib'
 
@@ -107,6 +112,49 @@ export class Bot {
 
     await privateChannel.send(`Your key is "${key}". Enter it into the server with \`/craftwork server-link ${key}\``)
     msg.reply('Your server key has been sent privately. Check your direct messages for instructions.')
+  }
+
+  async findVoiceChannelByName (
+    server: DiscordServer,
+    name: string
+  ): Promise<DiscordVoiceChannel | void> {
+    const guild = this.client.guilds.resolve(server.toString())
+    if (!guild) {
+      throw new Error('could not access the provided Discord server')
+    }
+
+    const channel = guild.channels.cache.find((channel: Channel) => {
+      if (!(channel instanceof VoiceChannel)) return false
+      return channel.name.toLowerCase() === name.toLowerCase()
+    })
+
+    if (!channel) {
+      return
+    }
+
+    return new DiscordVoiceChannel(channel.id)
+  }
+
+  async moveToVoiceChannel (
+    server: DiscordServer,
+    member: DiscordMember,
+    channel: DiscordVoiceChannel
+  ): Promise<void> {
+    const guild = this.client.guilds.resolve(server.toString())
+    if (!guild) {
+      throw new Error('could not access the provided Discord server')
+    }
+
+    const guildMember = guild.members.resolve(member.toString())
+    if (!guildMember) {
+      throw new Error('could not find this member of the Discord server')
+    }
+
+    if (!guildMember.voice) {
+      throw new Error('this user is not in voice chat')
+    }
+
+    await guildMember.voice.setChannel(channel.toString())
   }
 
   async start () {
