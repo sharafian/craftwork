@@ -32,18 +32,20 @@ export class App {
         }
       })
 
-    this.router.get('/players/:name/key',
+    this.router.get('/player/:name/key',
       this.discordKeys.validateKey(),
       async (ctx: Context) => {
+        const key = await this.playerKeys.getKey(
+          ctx.server,
+          new MinecraftPlayer(ctx.params.name)
+        )
+
         ctx.body = {
-          key: await this.playerKeys.getKey(
-            ctx.server,
-            new MinecraftPlayer(ctx.params.name)
-          )
+          key: key.toString()
         }
       })
 
-    this.router.put('/players/:name/room',
+    this.router.put('/player/:name/room',
       this.discordKeys.validateKey(),
       async (ctx: Context) => {
         const member = await this.playerKeys.getDiscordMember(
