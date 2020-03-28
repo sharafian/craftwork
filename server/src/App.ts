@@ -58,5 +58,11 @@ export class App {
         // TODO: dispatch to Bot with server and member
         ctx.status = 204
       })
+
+    this.app
+      .use(this.parser)
+      .use(this.router.allowedMethods())
+      .use(this.router.routes())
+      .listen(this.config.port)
   }
 }
