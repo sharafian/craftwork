@@ -1,0 +1,20 @@
+name: CraftWork
+main: io.github.sharafian.craftwork.CraftWork
+version: 0.0.1
+author: Sharafian
+commands:
+    discord:
+        description: Check discord auth status
+        usage: /<command>
+        permission: craftwork.discord
+        permission-message: You don't have <permission>
+permissions:
+    craftwork.discord:
+        description: Allows you to auth with discord and join rooms
+        default: true
+    craftwork.mkroom:
+        description: Allows you to create rooms
+        default: op
+    craftwork.rmroom:
+        description: Allows you to remove rooms
+        default: op
