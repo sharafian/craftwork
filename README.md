@@ -13,3 +13,10 @@ This lets you build a virtual office in minecraft, with meeting rooms that
 correspond to actual discord rooms. Combine with a plugin like WorldGuard
 to protect your 'main office' and give everyone their own personal area
 to customize.
+
+## TODOs
+
+- [ ] player unlink from discord
+- [ ] player unlink from minecraft
+- [ ] server rotate key
+- [ ] player link via private channel
