@@ -115,7 +115,7 @@ export class Bot {
     })
 
     this.client.on('message', async (msg: Message) => {
-      const tokens = msg.content.split(' ')
+      const tokens = msg.content.trim().split(' ')
 
       if (tokens[0] === Bot.prefix) {
         const command = this.commands[tokens[1]]
@@ -124,7 +124,11 @@ export class Bot {
           await msg.reply('Command not recognized. Available commands are: ' +
             Object.keys(this.commands).join(', '))
         } else {
-          await command.run(msg, tokens.slice(2))
+          try {
+            await command.run(msg, tokens.slice(2))
+          } catch (e) {
+            await msg.reply(`Error: ${e.message}`)
+          }
         }
       }
     })
