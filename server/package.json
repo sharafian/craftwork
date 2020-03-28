@@ -1,0 +1,28 @@
+{
+  "name": "@sharafian/craftwork-server",
+  "version": "1.0.0",
+  "description": "Server-side for CraftWork minecraft plugin",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "lint": "tslint --project .",
+    "start": "node dist/index.js",
+    "try": "npm build && npm start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sharafian/craftwork/tree/master/server"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@types/node": "^13.9.5",
+    "tslint": "^6.1.0",
+    "tslint-config-standard": "^9.0.0",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "discord.js": "^12.1.1"
+  }
+}

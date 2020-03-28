@@ -1,2 +1,4 @@
 /bukkit
 /plugin/target
+/server/dist
+/server/node_modules
