@@ -6,7 +6,7 @@ import Parser from 'koa-bodyparser'
 import { Config } from './Config'
 import { DiscordServerKeys } from './DiscordServerKeys'
 import { PlayerKeys } from './PlayerKeys'
-import { MinecraftPlayer } from './lib'
+import { MinecraftPlayer } from '../lib'
 
 export class App {
   private app = new Koa()

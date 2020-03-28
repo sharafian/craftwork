@@ -2,7 +2,7 @@ import * as fs from 'fs-extra'
 import { resolve } from 'path'
 import { Injector } from 'reduct'
 import { Config } from './Config'
-import { base64url } from './lib'
+import { base64url } from '../lib'
 
 export class Save {
   private config: Config

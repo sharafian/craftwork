@@ -1,4 +1,4 @@
-import { App } from './App'
+import { App } from './services/App'
 import reduct from 'reduct'
 
 const app = reduct()(App)

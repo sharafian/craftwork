@@ -6,7 +6,15 @@ import {
   DiscordServer,
   ServerKey,
   base64url
-} from './lib'
+} from '../lib'
+
+function serverKeyKey (key: ServerKey) {
+  return `serverkey:${key}`
+}
+
+function serverKey (server: DiscordServer) {
+  return `server:${server}`
+}
 
 export class DiscordServerKeys {
   private db: Save
@@ -22,19 +30,19 @@ export class DiscordServerKeys {
   async makeKey (server: DiscordServer): Promise<void> {
     const key = this.generateKey()
 
-    await this.db.set(`serverkey:${key}`, server.toString())
-    await this.db.set(`server:${server}`, key.toString())
+    await this.db.set(serverKeyKey(key), server.toString())
+    await this.db.set(serverKey(server), key.toString())
   }
 
   async getServer (key: ServerKey): Promise<DiscordServer | void> {
-    const server = await this.db.get(`serverkey:${key}`)
+    const server = await this.db.get(serverKeyKey(key))
     return server
       ? new DiscordServer(server)
       : undefined
   }
 
   async getKey (server: DiscordServer): Promise<ServerKey | void> {
-    const key = await this.db.get(`server:${server}`)
+    const key = await this.db.get(serverKey(server))
     return key
       ? new ServerKey(key)
       : undefined

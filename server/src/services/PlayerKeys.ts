@@ -6,7 +6,7 @@ import {
   PlayerKey,
   DiscordUser,
   sixDigitCode
-} from './lib'
+} from '../lib'
 
 function playerKeyKey (server: DiscordServer, player: MinecraftPlayer) {
   return `playerkey:${server}:${player}`
