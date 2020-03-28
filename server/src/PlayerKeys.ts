@@ -35,7 +35,7 @@ export class PlayerKeys {
     const name = await this.db.get(playerNameKey(server, key))
 
     if (!name) {
-      throw new Error('Player key is not recognized on this server')  
+      throw new Error('Player key is not recognized on this server')
     } else {
       await this.db.set(
         playerUserKey(server, new MinecraftPlayer(name)),
