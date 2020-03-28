@@ -6,7 +6,8 @@ import Parser from 'koa-bodyparser'
 import { Config } from './Config'
 import { DiscordServerKeys } from './DiscordServerKeys'
 import { PlayerKeys } from './PlayerKeys'
-import { MinecraftPlayer } from '../lib'
+import { Bot } from './Bot'
+import { MinecraftPlayer, DiscordVoiceChannel } from '../lib'
 
 export class App {
   private app = new Koa()
@@ -16,11 +17,13 @@ export class App {
   private config: Config
   private discordKeys: DiscordServerKeys
   private playerKeys: PlayerKeys
+  private bot: Bot
 
   constructor (deps: Injector) {
     this.config = deps(Config)
     this.discordKeys = deps(DiscordServerKeys)
     this.playerKeys = deps(PlayerKeys)
+    this.bot = deps(Bot)
   }
 
   async start () {
@@ -29,6 +32,27 @@ export class App {
       async (ctx: Context) => {
         ctx.body = {
           server: ctx.server.toString()
+        }
+      })
+
+    this.router.get('/server/rooms',
+      this.discordKeys.validateKey(),
+      async (ctx: Context) => {
+        if (!ctx.query.name) {
+          return ctx.throw(400, 'Must provide a voice channel name')
+        }
+
+        const room = await this.bot.findVoiceChannelByName(
+          ctx.server,
+          ctx.query.name
+        )
+
+        if (!room) {
+          return ctx.throw(404, 'No voice channel by that name')
+        }
+
+        ctx.body = {
+          room: room.toString()
         }
       })
 
@@ -48,6 +72,11 @@ export class App {
     this.router.put('/player/:name/room',
       this.discordKeys.validateKey(),
       async (ctx: Context) => {
+        const { room } = ctx.request.body
+        if (!room) {
+          return ctx.throw(400, 'Must specify room in request body')
+        }
+
         const member = await this.playerKeys.getDiscordMember(
           ctx.server,
           new MinecraftPlayer(ctx.params.name)
@@ -57,8 +86,17 @@ export class App {
           return ctx.throw(404, 'No discord member associated to this player')
         }
 
-        // TODO: dispatch to Bot with server and member
-        ctx.status = 204
+        try {
+          await this.bot.moveToVoiceChannel(
+            ctx.server,
+            member,
+            new DiscordVoiceChannel(room)
+          )
+
+          ctx.status = 204
+        } catch (e) {
+          return ctx.throw(403, e.message)
+        }
       })
 
     this.app
