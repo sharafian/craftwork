@@ -1,4 +1,4 @@
-export class DiscordUser {
+export class DiscordMember {
   constructor (public discordUserId: string) {}
 
   toString (): string {

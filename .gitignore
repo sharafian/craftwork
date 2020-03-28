@@ -3,3 +3,4 @@
 /server/dist
 /server/node_modules
 /server/data
+/server/start-dev.sh

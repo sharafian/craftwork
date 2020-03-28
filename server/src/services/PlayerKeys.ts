@@ -4,7 +4,7 @@ import {
   DiscordServer,
   MinecraftPlayer,
   PlayerKey,
-  DiscordUser,
+  DiscordMember,
   sixDigitCode
 } from '../lib'
 
@@ -17,7 +17,7 @@ function playerNameKey (server: DiscordServer, key: PlayerKey) {
 }
 
 function playerUserKey (server: DiscordServer, player: MinecraftPlayer) {
-  return `playeruser:${server}:${player}`
+  return `playermember:${server}:${player}`
 }
 
 export class PlayerKeys {
@@ -27,30 +27,35 @@ export class PlayerKeys {
     this.db = deps(Save)
   }
 
-  async setDiscordUser (
+  async setDiscordMember (
     server: DiscordServer,
     key: PlayerKey,
-    user: DiscordUser
-  ): Promise<void> {
+    member: DiscordMember
+  ): Promise<MinecraftPlayer> {
     const name = await this.db.get(playerNameKey(server, key))
 
     if (!name) {
       throw new Error('Player key is not recognized on this server')
     } else {
-      await this.db.set(
-        playerUserKey(server, new MinecraftPlayer(name)),
-        user.toString()
-      )
+      const player = new MinecraftPlayer(name)
+      const existingUser = await this.db.get(playerUserKey(server, player)) 
+
+      if (existingUser) {
+        throw new Error('Key has already been registered to a member')
+      }
+
+      await this.db.set(playerUserKey(server, player), member.toString())
+      return player
     }
   }
 
-  async getDiscordUser (
+  async getDiscordMember (
     server: DiscordServer,
     player: MinecraftPlayer
-  ): Promise<DiscordUser | void> {
-    const user = await this.db.get(playerUserKey(server, player))
-    return user
-      ? new DiscordUser(user)
+  ): Promise<DiscordMember | void> {
+    const member = await this.db.get(playerUserKey(server, player))
+    return member
+      ? new DiscordMember(member)
       : undefined
   }
 

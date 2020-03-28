@@ -46,13 +46,13 @@ export class App {
     this.router.put('/players/:name/room',
       this.discordKeys.validateKey(),
       async (ctx: Context) => {
-        const user = await this.playerKeys.getDiscordUser(
+        const member = await this.playerKeys.getDiscordMember(
           ctx.server,
           new MinecraftPlayer(ctx.params.name)
         )
 
-        if (!user) {
-          return ctx.throw(404, 'No discord user associated to this player')
+        if (!member) {
+          return ctx.throw(404, 'No discord member associated to this player')
         }
 
         // TODO: dispatch to Bot with server and member
