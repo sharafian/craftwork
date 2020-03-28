@@ -16,7 +16,7 @@ export function base64url (buf: Buffer): string {
 const MASK_LOWER_20 = 0xfffff
 export function sixDigitCode () {
   while (true) {
-    const candidate = randomBytes(3).readUInt32BE() & MASK_LOWER_20
+    const candidate = randomBytes(4).readUInt32BE() & MASK_LOWER_20
     if (candidate < 1e6) return String(candidate).padStart(6, '0')
   }
 }
