@@ -3,9 +3,9 @@ main: io.github.sharafian.craftwork.CraftWork
 version: 0.0.1
 author: Sharafian
 commands:
-    discord:
+    craftwork:
         description: Check discord auth status
-        usage: /<command>
+        usage: /<command> [subcommand] [args]
         permission: craftwork.discord
         permission-message: You don't have <permission>
 permissions:
@@ -19,8 +19,8 @@ permissions:
         description: Allows you to remove rooms
         default: op
     craftwork.setroom:
-    	description: Allows you to set the channel corresponding to a room
-    	default: op
+        description: Allows you to set the channel corresponding to a room
+        default: op
     craftwork.admin:
         description: Allows you to set the server key
         default: op
