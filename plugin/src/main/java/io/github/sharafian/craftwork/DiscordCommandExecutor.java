@@ -1,5 +1,8 @@
 package io.github.sharafian.craftwork;
 
+import java.io.InputStream;
+import java.net.URL;
+import java.net.HttpURLConnection;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.command.CommandSender;
@@ -8,11 +11,11 @@ import org.bukkit.Location;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
+import org.json.JSONObject;
 
 public class DiscordCommandExecutor implements CommandExecutor {
 	private final CraftWork plugin;
 	private final RoomManager rooms;
-	private static final String serverUrl = "https://localhost:8080";
 	private final Map<String, Location> targetedBlocks = new HashMap<String, Location>();
 
 	public DiscordCommandExecutor (CraftWork plugin, RoomManager rooms) {
@@ -21,7 +24,37 @@ public class DiscordCommandExecutor implements CommandExecutor {
 	}
 	
 	private void handleGetUserCode (CommandSender sender) {
-		return;
+		if (!(sender instanceof Player)) {
+			sender.sendMessage("Must be a player to link code");
+			return;
+		}
+
+		final String serverKey = this.plugin.getConfig().getString("server.key");
+		if (serverKey == null || serverKey.equals("")) {
+			sender.sendMessage("The server is not linked to discord.");
+			return;
+		}
+
+		try {
+			URL getUserCode = new URL(
+					Util.serverUrl + 
+					"/player/" + sender.getName() + "/key");
+
+			HttpURLConnection conn = (HttpURLConnection) getUserCode.openConnection();
+			conn.setRequestMethod("GET");
+			conn.setRequestProperty("Authorization", "Bearer " + serverKey);
+			conn.connect();
+
+			InputStream response = conn.getInputStream();
+			String body = Util.convertStreamToString(response);
+			JSONObject jsonBody = new JSONObject(body);
+			String key = jsonBody.getString("key");
+			sender.sendMessage("Your key is `" + key +
+					"`. Link with discord by typing `/craftwork link " +
+					key + "` into discord.");
+		} catch (Exception e) {
+			sender.sendMessage("Something went wrong: " + e.getMessage());
+		}
 	}
 
 	private void handleMakeRoom (CommandSender sender, String[] args) {
@@ -95,7 +128,7 @@ public class DiscordCommandExecutor implements CommandExecutor {
 			sender.sendMessage("Must be a player to use setroom");
 			return;
 		}
-		
+
 		if (args.length < 2) {
 			sender.sendMessage("Usage: /craftwork setroom <voice channel>");
 		}
@@ -119,7 +152,6 @@ public class DiscordCommandExecutor implements CommandExecutor {
 		rooms.get(index).setRoom(args[1]);
 		this.rooms.saveRooms(rooms);
 		player.sendMessage("Set the voce channel for this room to `" + args[1] + "`");
-		return;
 	}
 	
 	private void handleGetRoom (CommandSender sender, String[] args) {
