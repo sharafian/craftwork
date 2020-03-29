@@ -69,6 +69,42 @@ export class App {
         }
       })
 
+    this.router.put('/player/:name/room/name',
+      this.discordKeys.validateKey(),
+      async (ctx: Context) => {
+        const { name } = ctx.request.body
+        if (!name) {
+          return ctx.throw(400, 'Must specify name in request body')
+        }
+
+        const member = await this.playerKeys.getDiscordMember(
+          ctx.server,
+          new MinecraftPlayer(ctx.params.name)
+        )
+
+        if (!member) {
+          return ctx.throw(404, 'No discord member associated to this player')
+        }
+
+        const room = await this.bot.findVoiceChannelByName(ctx.server, name)
+
+        if (!room) {
+          return ctx.throw(404, 'No voice channel by that name')
+        }
+
+        try {
+          await this.bot.moveToVoiceChannel(
+            ctx.server,
+            member,
+            room
+          )
+
+          ctx.status = 204
+        } catch (e) {
+          return ctx.throw(403, e.message)
+        }
+      })
+
     this.router.put('/player/:name/room',
       this.discordKeys.validateKey(),
       async (ctx: Context) => {
