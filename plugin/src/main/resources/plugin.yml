@@ -18,3 +18,9 @@ permissions:
     craftwork.rmroom:
         description: Allows you to remove rooms
         default: op
+    craftwork.setroom:
+    	description: Allows you to set the channel corresponding to a room
+    	default: op
+    craftwork.admin:
+        description: Allows you to set the server key
+        default: op
