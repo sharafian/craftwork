@@ -52,7 +52,9 @@ public class MovementListener implements Listener {
 				os.close();
 			}
 
-			player.sendMessage("Status:" + conn.getResponseCode());
+			if (conn.getResponseCode() != 204) {
+				player.sendMessage("Status:" + conn.getResponseCode());
+			}
 		} catch (Exception e) {
 			player.sendMessage("Something went wrong: " + e.getMessage());
 		}
