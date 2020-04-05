@@ -27,6 +27,10 @@ export class App {
   }
 
   async start () {
+    this.router.get('/', async (ctx: Context) => {
+      ctx.body = 'OK'
+    })
+
     this.router.get('/server/id',
       this.discordKeys.validateKey(),
       async (ctx: Context) => {
