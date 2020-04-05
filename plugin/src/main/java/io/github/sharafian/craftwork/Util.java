@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class Util {
-	public static final String serverUrl = "http://localhost:8080";
+	public static final String serverUrl = "https://craftwork.lab.sharafian.com";
 
 	public static String convertStreamToString(InputStream is) {
 
